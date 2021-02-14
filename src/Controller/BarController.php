@@ -10,6 +10,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use App\Entity\Beer;
 use App\Entity\Category;
+use Symfony\Component\HttpFoundation\Request;
 
 class BarController extends AbstractController
 {
@@ -62,23 +63,6 @@ class BarController extends AbstractController
         // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
 
         return $content;
-    }
-
-    /**
-     * @Route("/beers", name="beers")
-     */
-    public function beers()
-    {
-        $beerRepo = $this->getDoctrine()->getRepository(Beer::class);
-
-        foreach ($beerRepo->findAll() as $beer) {
-           dump($beer->getCountry());
-        }
-      
-        return $this->render('beers/index.html.twig', [
-            'title' => 'Page beers',
-            'beers' => $beerRepo->findAll()
-        ]);
     }
 
     /**
@@ -186,5 +170,14 @@ class BarController extends AbstractController
         dump($repository->findByName('Ambrée'));
 
         return new Response('test repo');
+    }
+    
+    /**
+     * @Route("/menu", name="menu")
+     */
+    public function mainMenu(Request $request): Response{
+        dump($request->get('routeName'));
+
+        return new Response('menu');
     }
 }

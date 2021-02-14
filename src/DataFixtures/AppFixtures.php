@@ -15,11 +15,14 @@ class AppFixtures extends Fixture
     {
         // catégories normals
         $categoriesNormals = [
-            'blonde', 'brune', 'blanche'];
+            'blonde', 'brune', 'blanche'
+        ];
 
         // catégories specials
         $categoriesSpecials = [
-            'houblon', 'rose', 'menthe', 'grenadine', 'réglisse', 'marron', 'whisky', 'bio'
+            'houblon', 'rose', 'menthe', 
+            'grenadine', 'réglisse', 'marron', 
+            'whisky', 'bio'
         ];
 
         foreach ($categoriesNormals as $name) {
@@ -37,7 +40,10 @@ class AppFixtures extends Fixture
 
         $manager->flush();
 
-        $countries = ['belgium', 'french', 'English', 'germany'];
+        $countries = [
+            'belgium', 'french', 
+            'English', 'germany'
+        ];
 
         foreach ($countries as $name) {
             $country = new Country();
@@ -67,10 +73,12 @@ class AppFixtures extends Fixture
 
         $count = 0;
         $repoCountry = $manager->getRepository(Country::class);
+        $repoCatNormal = $manager->getRepository(Country::class);
+
         while ($count < 20) {
             $beer =  new Beer();
             // associer un pays une fois sur deux à une bière
-            if (rand(1, 2) === 1) {
+            if ( rand(1, 2) === 1 ) {
                 $name = $countries[rand(0, count($countries) - 1)];
                 $country = $repoCountry->findOneBy([
                     'name' => $name

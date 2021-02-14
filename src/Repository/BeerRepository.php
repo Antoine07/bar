@@ -22,7 +22,6 @@ class BeerRepository extends ServiceEntityRepository
     // /**
     //  * @return Beer[] Returns an array of Beer objects
     //  */
-    /*
     public function findByExampleField($value)
     {
         return $this->createQueryBuilder('b')
@@ -34,7 +33,6 @@ class BeerRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Beer

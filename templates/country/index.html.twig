@@ -4,24 +4,22 @@
 
 {% block body %}
 <div class="row">
+  <div class="col-sm-12">
+    <h1>{{ title }}</h1>
+  </div>
+</div>
+<div class="row">
 {% for beer in beers %}
   <div class="col-sm-6">
     <div class="card card__beers">
       <div class="card-body">
         <h5 class="card-title">
-          <a href="{{ path('beer', { id : beer.id }) }}">
+         <a href="{{ path('beer', { id : beer.id }) }}">
             {{ beer.name }}
           </a>
         </h5>
         <p>{{ beer.description }}</p>
         <img src="{{ asset('build/images/beer_00.jpg') }}" />
-        {% if beer.country %}
-          <p>
-             <a href="{{ path('country', { id : beer.country.id }) }}">
-                {{ beer.country.name }}
-            </a>
-          </p>
-        {% endif %}
       </div>
     </div>
   </div>

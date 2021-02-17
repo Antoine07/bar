@@ -4,8 +4,8 @@
 
 {% block body %}
 <div class="row">
-{% for beer in beers %}
-  <div class="col-sm-6">
+{% if beer %}
+  <div class="col-sm-12">
     <div class="card card__beers">
       <div class="card-body">
         <h5 class="card-title">
@@ -14,17 +14,23 @@
           </a>
         </h5>
         <p>{{ beer.description }}</p>
+        <p>Price:{{ beer.price ?? 'no price' }}</p>
+        <p>Degree:{{ beer.degree ?? 'no degree' }}</p>
         <img src="{{ asset('build/images/beer_00.jpg') }}" />
         {% if beer.country %}
-          <p>
-             <a href="{{ path('country', { id : beer.country.id }) }}">
-                {{ beer.country.name }}
-            </a>
-          </p>
+         <p>Country: {{ beer.country.name }}</p>
+        {% endif %}
+        {% if specials %}
+          <ul>
+            <li>Catégorie(s) Speciale(s)</li>
+          {% for category in specials %}
+            <li>{{ category.name }}</li>
+          {% endfor %}
+          </ul>
         {% endif %}
       </div>
     </div>
   </div>
-{% endfor %}
+{% endif %}
 </div>
 {% endblock %}

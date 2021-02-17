@@ -8,30 +8,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-use App\Entity\Beer;
-use App\Entity\Category;
+use App\Entity\{Beer,Category, Country, Statistic, Client};
+
 use Symfony\Component\HttpFoundation\Request;
 
 class BarController extends AbstractController
 {
 
     private $client;
-    private $categories = ['Brune', 'Ambrée', 'Blanche', 'Sans alcool'];
 
     public function __construct(HttpClientInterface $client)
     {
         $this->client = $client;
-    }
-
-    /**
-     * @Route("/bar", name="bar")
-     */
-    public function index(): Response
-    {
-        return $this->render('bar/index.html.twig', [
-            'title' => 'The bar kkkkkk',
-            'info' => 'Hello World'
-        ]);
     }
 
     /**
@@ -45,139 +33,92 @@ class BarController extends AbstractController
         ]);
     }
 
-    // ceci bloque une possible réponse au client 
-    private function beers_api()
-    {
-        $response = $this->client->request(
-            'GET',
-            'https://raw.githubusercontent.com/Antoine07/hetic_symfony/main/Introduction/Data/beers.json'
-        );
-
-        $statusCode = $response->getStatusCode();
-        // $statusCode = 200
-        $contentType = $response->getHeaders()['content-type'][0];
-        // $contentType = 'application/json'
-        $content = $response->getContent();
-        // $content = '{"id":521583, "name":"symfony-docs", ...}'
-        $content = $response->toArray();
-        // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
-
-        return $content;
-    }
-
     /**
-     * @Route("/home", name="home")
+     * @Route("/category/{id}", name="category")
      */
-    public function home()
+    public function showCategory(int $id)
     {
+        $catRepo = $this->getDoctrine()->getRepository(Category::class);
+        $category = $catRepo->find($id);
 
-        return $this->render('home/index.html.twig', [
-            'title' => "Page d'accueil",
+        return $this->render('category/index.html.twig', [
+            'title' => $category->getName(),
+            'beers' => $category->getBeers(),
         ]);
     }
 
     /**
-     * @Route("/newbeer", name="create_beer")
+     * @Route("/country/{id}", name="country")
      */
-    public function createBeer()
+    public function showCountry(int $id)
     {
-        $entityManager = $this->getDoctrine()->getManager();
+        $countryRepo = $this->getDoctrine()->getRepository(Country::class);
+        $countryegory = $countryRepo->find($id);
 
-        $beer = new Beer();
-        $beer->setname('Super Beer');
-        $beer->setPublishedAt(new \DateTime());
-        $beer->setDescription('Ergonomic and stylish!');
-
-        // tell Doctrine you want to (eventually) save the Beer (no queries yet)
-        $entityManager->persist($beer);
-
-        // actually executes the queries (i.e. the INSERT query)
-        $entityManager->flush();
-
-        return new Response('Saved new beer with id ' . $beer->getId());
-    }
-
-    /**
-     * @Route("/newcatbeer", name="newcatbeer")
-     */
-    public function createCatBeer()
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $beers = $this->getDoctrine()->getRepository(Beer::class);
-
-        // dump($beers->findAll());
-
-        $category = new Category();
-        $category->setname('Blonde');
-        $category->setDescription('Super bière blonde');
-
-        foreach ($beers->findAll() as $beer) {
-            $category->addBeer($beer);
-        }
-
-        $entityManager->persist($category);
-
-        $entityManager->flush();
-
-        return new Response('Saved all beers into category "Blonde" ');
-    }
-
-    private function generateCat()
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-
-        foreach ($this->categories as $name) {
-            $category = new Category(); // nouvel objet <=> une nouvelle entrée dans la base
-            $category->setName($name);
-            $entityManager->persist($category);
-        }
-
-        $entityManager->flush();
-    }
-
-    /**
-     * @Route("/newbeercat", name="newbeercat")
-     */
-    public function createBeerCat()
-    {
-        $this->generateCat();
-        $entityManager = $this->getDoctrine()->getManager();
-        $repository = $this->getDoctrine()->getRepository(Category::class);
-
-        $beer = new Beer();
-        $beer->setName('Bière Ardèchoise');
-        $beer->setPublishedAt(new \DateTime());
-        $beer->setDescription('Ergonomic and stylish!');
-
-        foreach ($repository->findAll() as $category) {
-            $beer->addCategory($category);
-        }
-
-        $entityManager->persist($beer);
-
-        $entityManager->flush();
-
-        return new Response('ok beer into categories');
+        return $this->render('country/index.html.twig', [
+            'title' => $countryegory->getName(),
+            'beers' => $countryegory->getBeers(),
+        ]);
     }
 
      /**
-     * @Route("/repo", name="repo")
+     * @Route("/statistic", name="statistic")
      */
-    public function repo(){
+    public function showStat()
+    {
+        $statRepo = $this->getDoctrine()->getRepository(Statistic::class);
+        $clientRepo = $this->getDoctrine()->getRepository(Client::class);
 
-        $repository = $this->getDoctrine()->getRepository(Category::class);
+        dump( $statRepo->conso('DESC') );
 
-        dump($repository->findByName('Ambrée'));
-
-        return new Response('test repo');
+        return $this->render('statistic/index.html.twig', [
+            'title' => 'Stat',
+            'statistic' => [],
+            'total' => $clientRepo->totalBeers()
+        ]);
     }
-    
+
+     /**
+     * @Route("/beer/{id}", name="beer")
+     */
+    public function showBeer(int $id)
+    {
+        $beerRepo = $this->getDoctrine()->getRepository(Beer::class);
+        $beeregory = $beerRepo->find($id);
+        $catRepo = $this->getDoctrine()->getRepository(Category::class);
+
+        return $this->render('beer/index.html.twig', [
+            'title' => $beeregory->getName(),
+            'beer' => $beeregory,
+            'specials' => $catRepo->findCatSpecial($id)
+        ]);
+    }
+
+    /**
+     * @Route("/", name="home")
+     */
+    public function home()
+    {
+        $beerRepo = $this->getDoctrine()->getRepository(Beer::class);
+
+        return $this->render('home/index.html.twig', [
+            'title' => "Page d'accueil",
+            'beers' => $beerRepo->findLastBeer(3),
+        ]);
+    }
+
     /**
      * @Route("/menu", name="menu")
      */
-    public function mainMenu(Request $request): Response{
-        dump($request->get('routeName'));
+    public function mainMenu(string $routeName, string $category_id ): Response
+    {
+        $catRepo = $this->getDoctrine()->getRepository(Category::class);
 
-        return new Response('menu');
+        return $this->render('partials/main_menu.html.twig', [
+            'title' => "Page d'accueil",
+            'categories' => $catRepo->findByTerm('normal'),
+            'route_name' => $routeName,
+            'category_id' => $category_id
+        ]);
     }
 }

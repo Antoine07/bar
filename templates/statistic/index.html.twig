@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+<div class="row">
+<ul>
+{% for stat in statistic %}
+  <li>Score : {{stat.score}}</li>
+  {% if stat.beer %}
+    <li>Name beer: {{stat.beer.name}}</li>
+  {% endif %}
+   {% if stat.client %}
+    <li>Client:{{stat.client.name}}</li>
+    <li>Weight:{{stat.client.weight}}</li>
+    <li>Age:{{stat.client.age}}</li>
+    <li>Nb beer:{{stat.client.numberBeer}}</li>
+  {% endif %}
+{% endfor %}
+</ul>
+</div>
+{% endblock %}

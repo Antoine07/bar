@@ -31,6 +31,31 @@ class CategoryRepository extends ServiceEntityRepository
                     ->getResult();
     }
 
+
+    public function findCatSpecial(int $id)
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.beers', 'b') // raisonner en terme de relation
+            ->where('b.id = :id')
+            ->setParameter('id', $id)
+            ->andWhere('c.term = :term')
+            ->setParameter('term', 'special')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCatbyTermByBeer(int $id, string $term)
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.beers', 'b') // raisonner en terme de relation
+            ->where('b.id = :id')
+            ->setParameter('id', $id)
+            ->andWhere('c.term = :term')
+            ->setParameter('term', $term)
+            ->getQuery()
+            ->getResult();
+    }
+
     /*
     public function findOneBySomeField($value): ?Category
     {
@@ -42,4 +67,5 @@ class CategoryRepository extends ServiceEntityRepository
         ;
     }
     */
+
 }

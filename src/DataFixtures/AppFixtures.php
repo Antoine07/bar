@@ -73,7 +73,7 @@ class AppFixtures extends Fixture
 
         $count = 0;
         $repoCountry = $manager->getRepository(Country::class);
-        $repoCatNormal = $manager->getRepository(Country::class);
+        $repoCatNormals = $manager->getRepository(Category::class)->findByTerm('normal');
 
         while ($count < 20) {
             $beer =  new Beer();
@@ -85,6 +85,17 @@ class AppFixtures extends Fixture
                 ]);
                 // ajout d'un country
                 $beer->setCountry($country);
+            }
+
+            // catégorie normal
+            $beer->addCategory($repoCatNormals[random_int(0,2)]);
+
+            $repoCatSpecials = $manager->getRepository(Category::class)->findByTerm('special');
+            shuffle( $repoCatSpecials);
+            
+            foreach (range(0, random_int(2, 3)) as $num ) {
+                $cat = array_pop($repoCatSpecials); 
+                $beer->addCategory($cat);
             }
 
             $beer->setName($names[random_int(0, count($names) - 1)]);

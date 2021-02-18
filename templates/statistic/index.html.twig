@@ -5,17 +5,23 @@
 {% block body %}
 <div class="row">
 <ul>
-{% for stat in statistic %}
-  <li>Score : {{stat.score}}</li>
-  {% if stat.beer %}
-    <li>Name beer: {{stat.beer.name}}</li>
-  {% endif %}
-   {% if stat.client %}
-    <li>Client:{{stat.client.name}}</li>
-    <li>Weight:{{stat.client.weight}}</li>
-    <li>Age:{{stat.client.age}}</li>
-    <li>Nb beer:{{stat.client.numberBeer}}</li>
-  {% endif %}
+<p>Avergae beer conso: {{ avg | round(2) }}, std: {{ std | round(2) }} </p>
+<p>Min conso: {{ min }} Max conso: {{ max}} </p>
+<p>Total beer(s): {{ total_beer }} Total client: {{ total_client}} </p>
+{% for client in clients %}
+  <li>Name : {{client.name}}</li>
+  <ul>
+    <li>Nb beer(s) : {{client.numberBeer}} average : {{ ( ( client.numberBeer / total_client) ) * 20 | round(2) }} </li>
+    {% if client.statistics %}
+      <ul>
+        {% for stat in client.statistics %}
+          {% if stat.beer is defined  %}
+            <li>Beer Name : {{ stat.beer.name }} score : {{ stat.score }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </ul>
 {% endfor %}
 </ul>
 </div>

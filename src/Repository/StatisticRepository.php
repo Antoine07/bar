@@ -34,38 +34,41 @@ class StatisticRepository extends ServiceEntityRepository
 
     }
 
-    // public function conso(string $order = 'ASC')
-    // {
-    //     $em = $this->getEntityManager();
-    //     $dql = '
-    //         SELECT c, COUNT(c.id) as nb
-    //         FROM App\Entity\Client c
-    //         JOIN c.statistics s
-    //         GROUP BY c.id
-    //         ORDER BY nb
-    //     ';
-
-    //     $query = $em->createQuery($dql);
-
-    //     return $query->getResult();
-
-    // }
-
-    public function conso(string $order = 'ASC')
+    public function conso()
     {
         $em = $this->getEntityManager();
         $dql = '
-            SELECT s, b, c.id
-            FROM App\Entity\Statistic s
-            JOIN s.client c
-            JOIN s.beer b
+            SELECT c, s
+            FROM App\Entity\Client c
+            JOIN c.statistics s
+            ORDER BY c.number_beer DESC
         ';
 
         $query = $em->createQuery($dql);
 
         return $query->getResult();
-
     }
+
+    public function statInfo(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT FORMAT(STD(c.number_beer), 2) AS std, 
+            MIN(c.number_beer) AS min, 
+            MAX(c.number_beer) AS max, 
+            AVG(c.number_beer) AS avg,
+            COUNT(c.id) AS nb_client,
+            SUM(c.number_beer) AS nb_beer
+            FROM client c
+            ';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAllAssociative();
+    }
+
+
  
     /*
     public function findOneBySomeField($value): ?Statistic

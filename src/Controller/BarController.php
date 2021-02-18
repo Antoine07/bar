@@ -67,14 +67,18 @@ class BarController extends AbstractController
     public function showStat()
     {
         $statRepo = $this->getDoctrine()->getRepository(Statistic::class);
-        $clientRepo = $this->getDoctrine()->getRepository(Client::class);
 
-        dump( $statRepo->conso('DESC') );
+        extract( $statRepo->statInfo()[0] );
 
         return $this->render('statistic/index.html.twig', [
             'title' => 'Stat',
-            'statistic' => [],
-            'total' => $clientRepo->totalBeers()
+            'clients' => $statRepo->conso() ,
+            'total_beer' => $nb_beer,
+            'total_client' =>$nb_client,
+            'avg' =>$avg,
+            'min' =>$min,
+            'max' =>$max,
+            'std' => $std
         ]);
     }
 

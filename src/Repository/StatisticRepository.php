@@ -49,25 +49,23 @@ class StatisticRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function statInfo(): array
+    public function statInfo()
     {
-        $conn = $this->getEntityManager()->getConnection();
-
-        $sql = '
+        $em = $this->getEntityManager();
+        $dql = '
             SELECT FORMAT(STD(c.number_beer), 2) AS std, 
             MIN(c.number_beer) AS min, 
             MAX(c.number_beer) AS max, 
             AVG(c.number_beer) AS avg,
             COUNT(c.id) AS nb_client,
             SUM(c.number_beer) AS nb_beer
-            FROM client c
-            ';
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+            FROM App\Entity\Client c
+        ';
 
-        return $stmt->fetchAllAssociative();
+        $query = $em->createQuery($dql);
+
+        return $query->getResult();
     }
-
 
  
     /*

@@ -8,9 +8,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-use App\Entity\{Beer,Category, Country, Statistic, Client};
-
-use Symfony\Component\HttpFoundation\Request;
+use App\Entity\{Beer, Category, Country, Statistic, Client};
+use App\Services\Hello;
+use App\Services\HelperParser;
+use App\Services\QuoteService;
+use cebe\markdown\Markdown;
 
 class BarController extends AbstractController
 {
@@ -61,28 +63,28 @@ class BarController extends AbstractController
         ]);
     }
 
-     /**
+    /**
      * @Route("/statistic", name="statistic")
      */
     public function showStat()
     {
         $statRepo = $this->getDoctrine()->getRepository(Statistic::class);
 
-        extract( $statRepo->statInfo()[0] );
+        extract($statRepo->statInfo()[0]);
 
         return $this->render('statistic/index.html.twig', [
             'title' => 'Stat',
-            'clients' => $statRepo->conso() ,
+            'clients' => $statRepo->conso(),
             'total_beer' => $nb_beer,
-            'total_client' =>$nb_client,
-            'avg' =>$avg,
-            'min' =>$min,
-            'max' =>$max,
+            'total_client' => $nb_client,
+            'avg' => $avg,
+            'min' => $min,
+            'max' => $max,
             'std' => $std
         ]);
     }
 
-     /**
+    /**
      * @Route("/beer/{id}", name="beer")
      */
     public function showBeer(int $id)
@@ -103,6 +105,7 @@ class BarController extends AbstractController
      */
     public function home()
     {
+
         $beerRepo = $this->getDoctrine()->getRepository(Beer::class);
 
         return $this->render('home/index.html.twig', [
@@ -114,7 +117,7 @@ class BarController extends AbstractController
     /**
      * @Route("/menu", name="menu")
      */
-    public function mainMenu(string $routeName, string $category_id ): Response
+    public function mainMenu(string $routeName, string $category_id): Response
     {
         $catRepo = $this->getDoctrine()->getRepository(Category::class);
 
@@ -125,4 +128,48 @@ class BarController extends AbstractController
             'category_id' => $category_id
         ]);
     }
+
+    /**
+     * @Route("/showService", name="showService")
+     */
+    public function showService(Hello $hello, HelperParser $translate)
+    {
+
+        $markdowns = [
+            '1' => <<<EOT
+# Recette nouvelle bière
+* Pommes
+* Poires
+    * Sous élément avec au moins quatre espaces devant.
+EOT,
+            '2' => <<<EOT
+# Deuxième recette de bière
+* Poires
+* Pommes
+    * Sous élément avec au moins quatre espaces devant.
+* Houblon
+EOT,
+];
+
+        return $this->render('showService/index.html.twig', [
+            'title' => 'Show service',
+            'message' => $hello->say(),
+            'recipes' => $translate->translateHtml($markdowns)
+        ]);
+    }
+
+     /**
+     * @Route("/quotes", name="quotes")
+     */
+    public function quotes(QuoteService $quote){
+
+        // dd($quote->getQuotes());
+
+        return $this->render('quotes/index.html.twig', [
+            'title' => 'Show service',
+            'quotes' => $quote->getQuotes()
+           
+        ]);
+    }
+
 }

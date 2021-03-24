@@ -67,16 +67,20 @@ class StatisticRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
- 
-    /*
-    public function findOneBySomeField($value): ?Statistic
+   
+
+    // /**
+        //  * @return Beer[] Returns an array of Beer objects
+    //  */
+    public function getIds($min = 16, $max = 20)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
+            ->select('b.id, s.score')
+            ->where('s.score BETWEEN :min AND :max')
+            ->join('s.beer', 'b') 
+            ->setParameter('min', $min)
+            ->setParameter('max', $max)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
 }

@@ -12,16 +12,19 @@ use App\Entity\{Beer, Category, Country, Statistic, Client};
 use App\Services\Hello;
 use App\Services\HelperParser;
 use App\Services\QuoteService;
+use App\Services\RecommendationService;
 use cebe\markdown\Markdown;
 
 class BarController extends AbstractController
 {
 
     private $client;
+    private $recommendationService;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(HttpClientInterface $client, RecommendationService $recommendationService)
     {
         $this->client = $client;
+        $this->recommendationService = $recommendationService;
     }
 
     /**

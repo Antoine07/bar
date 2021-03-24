@@ -13,6 +13,12 @@ class Quote
     const PRIORITY_NONE = 'none';
     const PRIORITY_IMPORTANT = 'important';
 
+    public function __construct(){
+        // une constante self car comme les variables elles ne dépendent pas de l'instance de la classe
+        $this->setPosition(self::PRIORITY_NONE);
+        $this->setCreatedAt(new \DateTime('now'));
+    }
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

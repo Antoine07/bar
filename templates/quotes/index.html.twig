@@ -8,8 +8,10 @@
   <div class="col-sm-12">
     <div class="card card__beers">
       <div class="card-body">
-        <h2 class="medium">{{quote['title']}}</h2>
-        {{ quote['content'] | raw }}
+        <h2 class="medium">{{quote.title}}</h2>
+        {{ quote.content | raw }}
+		<p>Position : {{quote.position}}</p>
+		<p>Created : {{quote.createdAt | date('d-m-Y h:m:s')}}</p>
       </div>
     </div>
   </div>

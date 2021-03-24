@@ -28,6 +28,7 @@
           {% endfor %}
           </ul>
         {% endif %}
+        {{ recommended.is(beer.id)  ?? 'no recommanded' }}
       </div>
     </div>
   </div>

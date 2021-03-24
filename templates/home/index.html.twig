@@ -9,9 +9,9 @@
     <div class="card card__beers">
       <div class="card-body">
         <h5 class="card-title">
-       
           <a href="{{ path('beer', { id : beer.id }) }}">
             {{ beer.name }}  
+           
           </a>
         </h5>
         <p>{{ beer.description }}</p>
@@ -22,14 +22,9 @@
                 {{ beer.country.name }}
             </a>
           </p>
-          
         {% endif %}
 
-        {% if beer.statistics %}
-          {% for statistic in beer.statistics %}
-            <p>Score : {{ statistic.score }}</p>
-          {% endfor %}
-        {% endif %}
+       {{ recommended.is(beer.id)  ?? 'no recommanded' }}
       </div>
     </div>
   </div>

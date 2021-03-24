@@ -29,10 +29,22 @@ class BeerRepository extends ServiceEntityRepository
             ->orderBy('b.id', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
 
-    
+    // /**
+    //  * @return Beer[] Returns an array of Beer objects
+    //  */
+    public function score(int $id)
+    {
+        return $this->createQueryBuilder('b')
+            ->select('s.beer, AVG( s.score ) as avg_score')
+            ->join('b.statistics', 's')
+            ->groupBy('s.beer')
+            ->andWhere('b.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -75,9 +75,10 @@ class StatisticRepository extends ServiceEntityRepository
     public function getIds($min = 16, $max = 20)
     {
         return $this->createQueryBuilder('s')
-            ->select('b.id, s.score')
-            ->where('s.score BETWEEN :min AND :max')
+            ->select('b.id, AVG( s.score ) as avg_score')
+            ->having('avg_score >= :min AND avg_score <= :max ')
             ->join('s.beer', 'b') 
+            ->groupBy('b.id')
             ->setParameter('min', $min)
             ->setParameter('max', $max)
             ->getQuery()

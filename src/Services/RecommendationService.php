@@ -23,9 +23,13 @@ class RecommendationService
         return $this->statistic->findBestBeer($min, $max);
     }
 
-    public function is(int $id)
+    public function is(int $id) 
     {
 
-        return in_array($id, $this->ids);
+        foreach($this->statistic->getIds() as $relation){
+            if( $relation['id'] === $id)  return round( $relation['avg_score'], 1 ) ;
+        }
+
+        return null;
     }
 }

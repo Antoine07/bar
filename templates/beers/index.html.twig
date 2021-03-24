@@ -20,6 +20,7 @@
         {% else %}
             <p>No country</p>
         {% endif %}
+        {{ recommended.is(beer.id)  ?? 'no recommanded' }}
       </div>
     </div>
   </div>

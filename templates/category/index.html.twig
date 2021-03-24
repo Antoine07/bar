@@ -20,6 +20,7 @@
         </h5>
         <p>{{ beer.description }}</p>
         <img src="{{ asset('build/images/beer_00.jpg') }}" />
+        {{ recommended.is(beer.id)  ?? 'no recommanded' }}
       </div>
     </div>
   </div>

@@ -25,31 +25,21 @@ class QuoteRepository extends ServiceEntityRepository
     //  * @return Quote[] Returns an array of Quote objects
     //  */
 
-    public function findByPositionOrder($order = 'DESC', $limit = 10)
-    {
-        return $this->createQueryBuilder('q')
-            ->orderBy('q.position', $order)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
+    // public function findByPositionOrder($order = 'DESC', $limit = 10)
+    // {
+    //     return $this->createQueryBuilder('q')
+    //         ->orderBy('q.position', $order)
+    //         ->setMaxResults($limit)
+    //         ->getQuery()
+    //         ->getResult();
+    // }
 
-    public function quoteImportant()
+    public function quotes($status, $order = 'ASC')
     {
         return $this->createQueryBuilder('q')
             ->andWhere('q.position = :val')
-            ->setParameter('val', 'important')
-            ->orderBy('q.created_at', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function quoteNone()
-    {
-        return $this->createQueryBuilder('q')
-            ->andWhere('q.position = :val')
-            ->setParameter('val', 'none')
-            ->orderBy('q.created_at', 'DESC')
+            ->orderBy('q.created_at', $order)
+            ->setParameter('val', $status)
             ->getQuery()
             ->getResult();
     }

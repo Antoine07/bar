@@ -16,6 +16,11 @@ class Quote
     const PRIORITY_NONE = 'none';
     const PRIORITY_IMPORTANT = 'important';
 
+    public function __construct(){
+
+        $this->setCreatedAt(new \DateTime('now'));
+    }
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -48,7 +53,7 @@ class Quote
     private $position;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column( type="datetime", nullable=true)
      */
     private $created_at;
 

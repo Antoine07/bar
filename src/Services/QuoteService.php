@@ -18,8 +18,8 @@ class QuoteService {
 
     public function getQuotes():array{
 
-        $qImportants = $this->quoteRepo->quoteImportant();
-        $qNone = $this->quoteRepo->quoteNone();
+        $qImportants = $this->quoteRepo->quotes('important');
+        $qNone = $this->quoteRepo->quotes('none');
 
 
         $quotes = array_merge($qImportants,$qNone  );

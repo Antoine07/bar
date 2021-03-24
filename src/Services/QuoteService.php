@@ -18,16 +18,24 @@ class QuoteService {
 
     public function getQuotes():array{
 
-        $quotes = $this->quoteRepo->findAll();
+        $qImportants = $this->quoteRepo->quoteImportant();
+        $qNone = $this->quoteRepo->quoteNone();
+
+
+        $quotes = array_merge($qImportants,$qNone  );
 
         $parseQuotes = [];
 
         foreach($quotes as $quote){
             $parseQuotes[] = [
+                'id' => $quote->getId(),
                 'title' => $quote->getTitle(),
                 'content' => $this->parser->parse($quote->getContent()),
+                'position' => $quote->getPosition(),
+                'createdAt' => $quote->getCreatedAt()
             ];
         }
+
 
         return $parseQuotes;
     }

@@ -9,4 +9,8 @@
 import './styles/app.css';
 
 // start the Stimulus application
+
+// loads the jquery package from node_modules
+const $ = require('jquery');
+
 import './bootstrap';

@@ -1,14 +1,10 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}New Quote
+{% block title %}Edit Quote
 {% endblock %}
-
 {% block body %}
-	<h1>Create new Quote</h1>
-
+	<h1>Edit Quote</h1>
 	{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 	    {{ form_widget(form) }}
 	{{ form_end(form) }}
-
 	<a href="{{ path('quotes') }}">back to list</a>
 {% endblock %}

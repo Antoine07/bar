@@ -6,6 +6,7 @@ use App\Entity\Quote;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Repository\QuoteRepository;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,8 +36,15 @@ class QuoteController extends AbstractController
         $quote = new Quote();
 
         $form = $this->createFormBuilder($quote)
-            ->add('title', TextType::class, ['required' => true, 'label' => 'Titre de la citation '])
-            ->add('content', TextareaType::class, ['required' => true, 'label' => 'Markdown '])
+            ->add('title', TextType::class, ['label' => 'Titre de la citation '])
+            ->add('content', TextareaType::class, ['label' => 'Markdown '])
+            ->add('position', ChoiceType::class, [
+                'choices'  => [
+                    'aucune' => null,
+                    'important' => 'important',
+                    'none' => 'none',
+                ],
+            ])
             ->add('save', SubmitType::class, ['label' => 'Create Quote'])
             ->getForm();
 
@@ -45,10 +53,12 @@ class QuoteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             // dd($quote); // l'hydratation du formulaire par le formeBuilder
-            
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($quote);
             $entityManager->flush(); // commit pour faire persiter la citation dans la bd
+
+            $this->addFlash('success', 'Quote Created! Knowledge is power!');
 
             return $this->redirectToRoute('quotes');
         }
@@ -59,4 +69,53 @@ class QuoteController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/{id}", name="quote_delete", methods={"POST"})
+     */
+    public function delete(Request $request, Quote $quote): Response
+    {
+
+        if ($this->isCsrfTokenValid('delete' . $quote->getId(), $request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($quote);
+            $entityManager->flush(); // commit pour faire persiter la citation dans la bd
+
+            $this->addFlash('success', 'Quote deleted! Knowledge is power!');
+        }
+
+        return $this->redirectToRoute('quotes');
+    }
+
+    /**
+     * @Route("/{id}/edit", name="quote_edit", methods={"GET","POST"})
+     */
+    public function edit(Request $request, Quote $quote): Response
+    {
+        $form = $this->createFormBuilder($quote)
+            ->add('title', TextType::class, ['label' => 'Titre de la citation '])
+            ->add('content', TextareaType::class, ['label' => 'Markdown '])
+            ->add('position', ChoiceType::class, [
+                'choices'  => [
+                    'aucune' => null,
+                    'important' => 'important',
+                    'none' => 'none',
+                ],
+            ])
+            ->add('update', SubmitType::class, ['label' => 'Update Quote'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash('success', 'Quote updated! Knowledge is power!');
+
+            return $this->redirectToRoute('quotes');
+        }
+        return $this->render('quote/edit.html.twig', [
+            'quote' => $quote,
+            'form' => $form->createView(),
+        ]);
+    }
 }

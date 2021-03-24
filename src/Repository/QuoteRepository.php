@@ -6,6 +6,8 @@ use App\Entity\Quote;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
+
 /**
  * @method Quote|null find($id, $lockMode = null, $lockVersion = null)
  * @method Quote|null findOneBy(array $criteria, array $orderBy = null)
@@ -22,29 +24,33 @@ class QuoteRepository extends ServiceEntityRepository
     // /**
     //  * @return Quote[] Returns an array of Quote objects
     //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('q')
-            ->andWhere('q.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('q.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Quote
+    public function findByPositionOrder($order = 'DESC', $limit = 10)
     {
         return $this->createQueryBuilder('q')
-            ->andWhere('q.exampleField = :val')
-            ->setParameter('val', $value)
+            ->orderBy('q.position', $order)
+            ->setMaxResults($limit)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    public function quoteImportant()
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.position = :val')
+            ->setParameter('val', 'important')
+            ->orderBy('q.created_at', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function quoteNone()
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.position = :val')
+            ->setParameter('val', 'none')
+            ->orderBy('q.created_at', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

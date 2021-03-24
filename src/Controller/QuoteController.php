@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Repository\QuoteRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +38,12 @@ class QuoteController extends AbstractController
         $form = $this->createFormBuilder($quote)
             ->add('title', TextType::class, ['required' => true, 'label' => 'Titre de la citation '])
             ->add('content', TextareaType::class, ['required' => true, 'label' => 'Markdown '])
+            ->add('position', ChoiceType::class, [
+                'choices' => [
+                    'none' => 'none',
+                    'important' => 'important',
+                ]
+            ])
             ->add('save', SubmitType::class, ['label' => 'Create Quote'])
             ->getForm();
 
@@ -45,7 +52,7 @@ class QuoteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             // dd($quote); // l'hydratation du formulaire par le formeBuilder
-            
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($quote);
             $entityManager->flush(); // commit pour faire persiter la citation dans la bd
@@ -59,4 +66,22 @@ class QuoteController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/{id}", name="quote_delete", methods={"POST"})
+     */
+    public function delete(Request $request, Quote $quote)
+    {
+
+        if ($this->isCsrfTokenValid('delete' . $quote->getId(), $request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($quote);
+            $entityManager->flush(); // commit pour faire persiter la citation dans la bd
+
+            $this->addFlash('success', 'Quote deleted! Knowledge is power!'); // message flash qui s'affiche qu'une seule fois
+        } else {
+            $this->addFlash('echec', 'Quote not deleted! Knowledge is power!');
+        }
+
+        return $this->redirectToRoute('quotes');
+    }
 }
